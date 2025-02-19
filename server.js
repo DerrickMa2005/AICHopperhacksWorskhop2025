@@ -11,8 +11,7 @@ async function chatGPT(prompt = "Respond with No prompt given") {
     try {
         const gptResponse = await client.chat.completions.create(
             { messages: [{ role: "system", content: "You are a helpful assistant." }, 
-                { role: "user", 
-                content: prompt }], 
+                { role: "user", content: prompt }], 
                 model: "gpt-4o-mini", 
                 max_tokens: 150 });
                 return String(gptResponse.choices[0].message.content);
