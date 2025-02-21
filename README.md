@@ -1,4 +1,4 @@
-# AICHopperhacksWorshop2025
+# AICHopperhacksWorkshop2025
 
 This repo contains the completed project which we covered in the Hopperhacks workshop. This branch contains the functioning code. Note: Once the workshop is over, you will need your own ChatGPT API key to run this project.
 
