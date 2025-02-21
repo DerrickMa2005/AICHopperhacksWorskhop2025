@@ -1,6 +1,6 @@
 # AICHopperhacksWorshop2025
 
-This repo contains the completed project which we covered in the Hopperhacks workshop. Note: Once the workshop is over, you will need your own ChatGPT API key to run this project.
+This repo contains the completed project which we covered in the Hopperhacks workshop. This branch contains the functioning code. Note: Once the workshop is over, you will need your own ChatGPT API key to run this project.
 
 ## How to run the project
 
@@ -17,7 +17,7 @@ npm install
 Create a .env file to hold your ChatGPT API Key.
 
 ```
-chatgpt_api : "<Insert Your API Key Here>"
+OPENAI_API_KEY: "<Insert Your API Key Here>"
 ```
 
 **Step 3**
