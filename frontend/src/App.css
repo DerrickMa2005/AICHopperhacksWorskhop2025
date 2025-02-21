@@ -18,3 +18,11 @@ form > input {
   border-radius: 5px;
   width: 50%;
 }
+
+.user {
+  background-color: #ddd;
+  margin-left: auto;
+  max-width: 80%;
+  border-radius: 5px;
+  padding: 5px;
+}

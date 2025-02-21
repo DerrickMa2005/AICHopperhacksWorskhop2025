@@ -9,13 +9,14 @@ const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
-async function chat(prompt) {
+async function chat(history) {
     try {
+        console.log(history);
         const gptResponse = await client.chat.completions.create({
             model: "gpt-4o-mini",
             messages: [
-                { role: "system", content: "You are a helpful assistant." },
-                { role: "user", content: prompt }
+                { role: "system", content: "You are a trivia bot." },
+                ...history
             ],
             max_tokens: 150
         });
@@ -29,13 +30,14 @@ async function chat(prompt) {
 
 app.post("/chat", async (req, res) => {
     try {
-        const userPrompt = req.body.prompt;
+        const history = req.body.history;
+        console.log(history);
 
-        if (!userPrompt || typeof userPrompt !== "string") {
+        if (!history) {
             return res.status(400).json({ error: "Invalid request body" });
         }
 
-        const output = await chat(userPrompt);
+        const output = await chat(history);
         res.json({ response: output });
     } catch (error) {
         console.error("Server Error:", error);
