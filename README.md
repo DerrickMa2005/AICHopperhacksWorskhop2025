@@ -17,7 +17,7 @@ npm install
 Create a .env file to hold your ChatGPT API Key.
 
 ```
-chatgpt_api : "<Insert Your API Key Here>"
+OPENAI_API_KEY : "<Insert Your API Key Here>"
 ```
 
 **Step 3**
