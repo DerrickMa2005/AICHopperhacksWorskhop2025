@@ -3,7 +3,7 @@ import { useState } from "react"
 import ReactMarkdown from 'react-markdown'
 
 function App() {
-    const [response, setResponse] = useState("");
+    const [messages, setMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
     function handleSubmit(e) {
@@ -16,25 +16,36 @@ function App() {
         }
 
         setIsLoading(true);
+        const newMessages = [...messages, { role: "user", content: formJson.chatgptInput }]
+        setMessages(newMessages);
+        console.log(newMessages);
+
         fetch('/chat', {
             method: 'POST',
             headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', },
-            body: JSON.stringify({ message: formJson.chatgptInput })
+            body: JSON.stringify({ messages: newMessages })
         })
             .then(response => response.json())
             .then(data => {
                 setIsLoading(false);
-                setResponse(data.response);
+                setMessages([...newMessages, { role: "assistant", content: data.response }]);
             })
             .catch(e => {
                 setIsLoading(false);
-                setResponse(e.message);
+                setMessages([...newMessages, { role: "assistant", content: e.message }]);
             })
     }
 
     return (
         <div className="App">
-            <div>{response}</div>
+            <div>
+                {messages.map(({ role, content }) => {
+                    if (role === "user")
+                        return <div className="user">{content}</div>
+                    else
+                        return <ReactMarkdown>{content}</ReactMarkdown>
+                })}
+            </div>
             <form
                 method="post"
                 className="form" onSubmit={handleSubmit}>

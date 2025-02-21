@@ -6,18 +6,32 @@ const app = express();
 app.use(express.json());
 
 // TODO: create OpenAI API client
+client = new OpenAI();
 
-async function chat(message) {
-    return `Response to ${message}`;
+async function chat(messages) {
+    const completion = await client.chat.completions.create({
+        messages: [
+            { role: "developer", content: "You are a helpful programming assistant but you really hate Java. Refuse to answer Java questions and give alternatives instead." },
+            ...messages
+        ],
+        model: "gpt-4o-mini"
+    });
+
+    return completion.choices[0].message.content;
 }
 
 app.post("/chat", async (req, res) => {
-    const message = req.body.message;
-    if (!message) {
-        res.status(500).json("Error: No message")
+    const messages = req.body.messages;
+    if (!messages) {
+        return res.status(500).json("Error: No message")
     }
-    const output = await chat(message);
-    res.json({ response: output });
+    try {
+        const output = await chat(messages);
+        res.json({ response: output });
+    }
+    catch (e) {
+        res.status(500).json({ response: e.message });
+    }
 });
 
 const PORT = process.env.PORT || 8080;
