@@ -1,38 +1,49 @@
-const OpenAI = require('openai');
-const dotenv = require('dotenv').config();
+require('dotenv').config();
 const express = require("express");
+const OpenAI = require('openai');
+
 const app = express();
 app.use(express.json());
+
 const client = new OpenAI({
-    apiKey: process.env.chatgpt_api, 
+    apiKey: process.env.OPENAI_API_KEY
 });
 
-async function chatGPT(prompt = "Respond with No prompt given") {
+async function chat(prompt) {
     try {
-        const gptResponse = await client.chat.completions.create(
-            { messages: [{ role: "system", content: "You are a helpful assistant." }, 
-                { role: "user", content: prompt }], 
-                model: "gpt-4o-mini", 
-                max_tokens: 150 });
-                return String(gptResponse.choices[0].message.content);
-            } catch (e) {
-                console.log(e);
-                return "Error";
-            }
+        const gptResponse = await client.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+                { role: "system", content: "You are a helpful assistant." },
+                { role: "user", content: prompt }
+            ],
+            max_tokens: 150
+        });
+
+        return gptResponse.choices[0]?.message?.content || "No response from AI";
+    } catch (e) {
+        console.error("OpenAI API Error:", e);
+        return `OpenAI Error: ${e.message || "Unknown error"}`;
+    }
 }
-app.post("/", (req, res) => {
-    chatGPT(String(req.body.body)).then((output) => {
-        res.send({ "response": output });
-    });
+
+app.post("/chat", async (req, res) => {
+    try {
+        const userPrompt = req.body.prompt;
+
+        if (!userPrompt || typeof userPrompt !== "string") {
+            return res.status(400).json({ error: "Invalid request body" });
+        }
+
+        const output = await chat(userPrompt);
+        res.json({ response: output });
+    } catch (error) {
+        console.error("Server Error:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 });
 
 const PORT = process.env.PORT || 8080;
-
-
-app.listen(PORT, (error) =>{
-    if(!error)
-        console.log("Server is Successfully Running, and App is listening on port "+ PORT)
-    else 
-        console.log("Error occurred, server can't start", error);
-    }
-);
+app.listen(PORT, () => {
+    console.log(`Server is successfully running on port ${PORT}`);
+});
